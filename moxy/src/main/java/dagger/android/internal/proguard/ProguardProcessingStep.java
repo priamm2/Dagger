@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2024 The Dagger Authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package dagger.android.internal.proguard;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -31,19 +15,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.file.Path;
 
-/**
- * A annotation processing step to generate dagger-android's specific proguard needs. This is only
- * intended to run over the dagger-android project itself, as the alternative is to create an
- * intermediary java_library for proguard rules to be consumed by the project.
- *
- * <p>Basic structure looks like this:
- *
- * <pre><code>
- *   resources/META-INF/com.android.tools/proguard/dagger-android.pro
- *   resources/META-INF/com.android.tools/r8/dagger-android.pro
- *   resources/META-INF/proguard/dagger-android.pro
- * </code></pre>
- */
 public final class ProguardProcessingStep extends BaseProcessingStep {
   private final XProcessingEnv processingEnv;
 

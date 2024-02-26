@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2017 The Dagger Authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package dagger.android.processor;
 
 import androidx.room.compiler.processing.JavaPoetExtKt;
@@ -35,25 +19,12 @@ import dagger.internal.codegen.xprocessing.XElements;
 import java.util.Optional;
 import javax.tools.Diagnostic.Kind;
 
-/**
- * A descriptor of a generated {@link dagger.Module} and {@link dagger.Subcomponent} to be generated
- * from a {@code ContributesAndroidInjector} method.
- */
 @AutoValue
 abstract class AndroidInjectorDescriptor {
-  /** The type to be injected; the return type of the {@code ContributesAndroidInjector} method. */
   abstract ClassName injectedType();
-
-  /** Scopes to apply to the generated {@link dagger.Subcomponent}. */
   abstract ImmutableSet<AnnotationSpec> scopes();
-
-  /** See {@code ContributesAndroidInjector#modules()} */
   abstract ImmutableSet<ClassName> modules();
-
-  /** The {@link dagger.Module} that contains the {@code ContributesAndroidInjector} method. */
   abstract ClassName enclosingModule();
-
-  /** The method annotated with {@code ContributesAndroidInjector}. */
   abstract XExecutableElement method();
 
   @AutoValue.Builder
@@ -78,10 +49,6 @@ abstract class AndroidInjectorDescriptor {
       this.messager = messager;
     }
 
-    /**
-     * Validates a {@code ContributesAndroidInjector} method, returning an {@link
-     * AndroidInjectorDescriptor} if it is valid, or {@link Optional#empty()} otherwise.
-     */
     Optional<AndroidInjectorDescriptor> createIfValid(XMethodElement method) {
       ErrorReporter reporter = new ErrorReporter(method, messager);
 
@@ -146,7 +113,6 @@ abstract class AndroidInjectorDescriptor {
       throw new IllegalArgumentException("Does not have type list");
     }
 
-    // TODO(ronshapiro): use ValidationReport once it is moved out of the compiler
     private static class ErrorReporter {
       private final XElement subject;
       private final XMessager messager;

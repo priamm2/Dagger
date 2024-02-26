@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2017 The Dagger Authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package dagger.android.processor;
 
 import static com.google.common.collect.Iterables.getOnlyElement;
@@ -33,7 +17,6 @@ import dagger.internal.codegen.xprocessing.XElements;
 import dagger.internal.codegen.xprocessing.XTypes;
 import javax.tools.Diagnostic.Kind;
 
-/** Validates the correctness of {@link dagger.MapKey}s used with {@code dagger.android}. */
 final class AndroidMapKeyProcessingStep extends BaseProcessingStep {
   private final XProcessingEnv processingEnv;
 
@@ -63,7 +46,6 @@ final class AndroidMapKeyProcessingStep extends BaseProcessingStep {
 
     XType returnType = method.getReturnType();
     if (!factoryElement().getType().getRawType().isAssignableFrom(returnType.getRawType())) {
-      // if returnType is not related to AndroidInjector.Factory, ignore the method
       return;
     }
 
@@ -94,14 +76,11 @@ final class AndroidMapKeyProcessingStep extends BaseProcessingStep {
 
     validateReturnType(method);
 
-    // @Binds methods should only have one parameter, but we can't guarantee the order of Processors
-    // in javac, so do a basic check for valid form
     if (method.hasAnnotation(TypeNames.BINDS) && method.getParameters().size() == 1) {
       validateMapKeyMatchesBindsParameter(annotation, method);
     }
   }
 
-  /** Report an error if the method's return type is not {@code AndroidInjector.Factory<?>}. */
   private void validateReturnType(XMethodElement method) {
     XType returnType = method.getReturnType();
     XType requiredReturnType = injectorFactoryOf(processingEnv.getWildcardType(null, null));
@@ -119,20 +98,6 @@ final class AndroidMapKeyProcessingStep extends BaseProcessingStep {
     }
   }
 
-  /**
-   * A valid @Binds method could bind an {@code AndroidInjector.Factory} for one type, while giving
-   * it a map key of a different type. The return type and parameter type would pass typical @Binds
-   * validation, but the map lookup in {@code DispatchingAndroidInjector} would retrieve the wrong
-   * injector factory.
-   *
-   * <pre>{@code
-   * {@literal @Binds}
-   * {@literal @IntoMap}
-   * {@literal @ClassKey(GreenActivity.class)}
-   * abstract AndroidInjector.Factory<?> bindBlueActivity(
-   *     BlueActivityComponent.Builder builder);
-   * }</pre>
-   */
   private void validateMapKeyMatchesBindsParameter(
       ClassName annotationName, XMethodElement method) {
     XType parameterType = getOnlyElement(method.getParameters()).getType();
@@ -152,7 +117,6 @@ final class AndroidMapKeyProcessingStep extends BaseProcessingStep {
     }
   }
 
-  /** Returns a {@link XType} for {@code AndroidInjector.Factory<implementationType>}. */
   private XType injectorFactoryOf(XType implementationType) {
     return processingEnv.getDeclaredType(factoryElement(), implementationType);
   }
